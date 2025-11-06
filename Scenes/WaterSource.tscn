@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfdv3awqye81a"]
+
+[ext_resource type="Texture2D" uid="uid://c7sdv6o0sx66a" path="res://sprites/Tiles/Water_Tile.png" id="1_0xuje"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n8f7h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvvvf"]
+atlas = ExtResource("1_0xuje")
+region = Rect2(0, 0, 48, 45.5)
+
+[node name="WaterSource" type="Node2D" groups=["Water"]]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_n8f7h")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D"]
+texture = SubResource("AtlasTexture_nvvvf")

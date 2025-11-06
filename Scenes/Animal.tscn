@@ -1,0 +1,63 @@
+[gd_scene load_steps=11 format=3 uid="uid://rtoxnug867tb"]
+
+[ext_resource type="Script" uid="uid://oi7sxllm1awm" path="res://Scripts/animal.gd" id="1_0tjbk"]
+[ext_resource type="Texture2D" uid="uid://cx5xaw758ykm" path="res://icon.svg" id="1_l6hdp"]
+[ext_resource type="Script" uid="uid://dqfieck4p7ry6" path="res://States/state_machine.gd" id="3_11m2q"]
+[ext_resource type="Script" uid="uid://c2u3ewctwpjo0" path="res://States/Idle.gd" id="4_p0irm"]
+[ext_resource type="Script" uid="uid://uit8ndy0c2f1" path="res://States/Follow.gd" id="5_5uf8i"]
+[ext_resource type="Script" uid="uid://jaytof6lj4x4" path="res://States/Flee.gd" id="6_xcrs8"]
+[ext_resource type="Script" uid="uid://dempq08mcvvv8" path="res://States/SearchFood.gd" id="7_wk8kx"]
+[ext_resource type="Script" uid="uid://57rhs7u1vurx" path="res://States/SearchWater.gd" id="8_idc63"]
+[ext_resource type="Script" uid="uid://x5p31q4lrina" path="res://Scripts/PreyDecision.gd" id="9_n02sa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0tjbk"]
+size = Vector2(127, 128)
+
+[node name="Animal" type="CharacterBody2D" groups=["Prey"]]
+script = ExtResource("1_0tjbk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_l6hdp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, -1)
+shape = SubResource("RectangleShape2D_0tjbk")
+
+[node name="State Machine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_11m2q")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("4_p0irm")
+Animal = NodePath("../..")
+metadata/_custom_type_script = "uid://c2u3ewctwpjo0"
+
+[node name="Follow" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("5_5uf8i")
+Animal = NodePath("../..")
+move_speed = 50.0
+metadata/_custom_type_script = "uid://uit8ndy0c2f1"
+
+[node name="Flee" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("6_xcrs8")
+Animal = NodePath("../..")
+move_speed = 50.0
+metadata/_custom_type_script = "uid://jaytof6lj4x4"
+
+[node name="SearchFood" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("7_wk8kx")
+Animal = NodePath("../..")
+metadata/_custom_type_script = "uid://dempq08mcvvv8"
+
+[node name="SearchWater" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("8_idc63")
+Animal = NodePath("../..")
+metadata/_custom_type_script = "uid://57rhs7u1vurx"
+
+[node name="PreyDecision" type="Node" parent="." node_paths=PackedStringArray("animal", "state_machine")]
+script = ExtResource("9_n02sa")
+animal = NodePath("..")
+state_machine = NodePath("../State Machine")
+hunger_rate = 0.2
+thirst_rate = 0.1
+metadata/_custom_type_script = "uid://x5p31q4lrina"
