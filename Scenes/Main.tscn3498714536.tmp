@@ -553,5 +553,8 @@ position = Vector2(370, 453)
 rotation = 1.5707964
 shape = SubResource("RectangleShape2D_v1gob")
 
-[node name="NavigationGrid" type="Node2D" parent="." groups=["Navigation"]]
+[node name="NavigationGrid" type="Node2D" parent="."]
 script = ExtResource("7_jw32o")
+cell_size = null
+grid_size = null
+debug_draw = null

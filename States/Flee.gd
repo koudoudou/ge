@@ -2,7 +2,7 @@ extends State
 class_name Flee
 
 @export var Animal: CharacterBody2D
-@export var move_speed := 150.0
+@export var move_speed := 100.0
 var danger_target: Node2D
 
 func Enter():

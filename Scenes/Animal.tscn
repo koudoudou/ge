@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://rtoxnug867tb"]
+[gd_scene load_steps=12 format=3 uid="uid://rtoxnug867tb"]
 
 [ext_resource type="Script" uid="uid://oi7sxllm1awm" path="res://Scripts/animal.gd" id="1_0tjbk"]
 [ext_resource type="Texture2D" uid="uid://cx5xaw758ykm" path="res://icon.svg" id="1_l6hdp"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://jaytof6lj4x4" path="res://States/Flee.gd" id="6_xcrs8"]
 [ext_resource type="Script" uid="uid://dempq08mcvvv8" path="res://States/SearchFood.gd" id="7_wk8kx"]
 [ext_resource type="Script" uid="uid://57rhs7u1vurx" path="res://States/SearchWater.gd" id="8_idc63"]
+[ext_resource type="Script" uid="uid://di3r2s4cxxilx" path="res://States/Dead.gd" id="9_csly7"]
 [ext_resource type="Script" uid="uid://x5p31q4lrina" path="res://Scripts/PreyDecision.gd" id="9_n02sa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0tjbk"]
@@ -41,23 +42,29 @@ metadata/_custom_type_script = "uid://uit8ndy0c2f1"
 [node name="Flee" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
 script = ExtResource("6_xcrs8")
 Animal = NodePath("../..")
-move_speed = 50.0
+move_speed = 40.0
 metadata/_custom_type_script = "uid://jaytof6lj4x4"
 
 [node name="SearchFood" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
 script = ExtResource("7_wk8kx")
 Animal = NodePath("../..")
+move_speed = 25.0
 metadata/_custom_type_script = "uid://dempq08mcvvv8"
 
 [node name="SearchWater" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
 script = ExtResource("8_idc63")
 Animal = NodePath("../..")
+move_speed = 25.0
 metadata/_custom_type_script = "uid://57rhs7u1vurx"
+
+[node name="Dead" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
+script = ExtResource("9_csly7")
+Animal = NodePath("../..")
+metadata/_custom_type_script = "uid://di3r2s4cxxilx"
 
 [node name="PreyDecision" type="Node" parent="." node_paths=PackedStringArray("animal", "state_machine")]
 script = ExtResource("9_n02sa")
 animal = NodePath("..")
 state_machine = NodePath("../State Machine")
-hunger_rate = 0.2
 thirst_rate = 0.1
 metadata/_custom_type_script = "uid://x5p31q4lrina"

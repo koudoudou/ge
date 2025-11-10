@@ -4,9 +4,11 @@ class_name PreyDecision
 @export var danger_radius := 200.0
 
 var danger := 0.0
+var index := 0
 func _process(delta: float):
-	if is_dead:
-		return
+	if hunger >= 1.0 or thirst >= 1.0 or index == 1:
+		var current = state_machine.current_state		
+		state_machine.on_child_transition(current,"Dead")
 		
 	hunger = clamp(hunger + hunger_rate * delta, 0.0, 1.0)
 	thirst = clamp(thirst + thirst_rate * delta, 0.0, 1.0)	
@@ -18,15 +20,15 @@ func _process(delta: float):
 		make_fuzzy_decision()
 		decision_timer = 1.0	
 		
-	if hunger >= 1.0 or thirst >= 1.0:
-		die()
+
+		
 		
 func make_fuzzy_decision():
 	var current = state_machine.current_state
 	var current_name = current.name.to_lower() if current else ""
 
 	danger = check_for_predators()
-
+		
 	var flee_val = danger
 	var food_val = hunger
 	var water_val = thirst
@@ -45,6 +47,10 @@ func make_fuzzy_decision():
 func check_for_predators() -> float:
 	var predators = get_tree().get_nodes_in_group("Predator")
 	for p in predators:
+		if animal.global_position.distance_to(p.global_position) < 58:
+			index = 1
+		else:
+			index = 0		
 		if animal.global_position.distance_to(p.global_position) < danger_radius:
-			return 1.0
+			return 1.0	
 	return 0.0

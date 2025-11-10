@@ -555,3 +555,5 @@ shape = SubResource("RectangleShape2D_v1gob")
 
 [node name="NavigationGrid" type="Node2D" parent="." groups=["Navigation"]]
 script = ExtResource("7_jw32o")
+cell_size = null
+debug_draw = null

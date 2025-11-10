@@ -7,7 +7,7 @@ var target_food: Node2D
 
 func Enter():
 	target_food = find_nearest_food()
-
+	
 func Physics_Update(delta):
 	if not target_food:
 		Transitioned.emit(self, "Idle")
