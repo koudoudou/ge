@@ -4,9 +4,12 @@ class_name SearchWater
 @export var Animal: CharacterBody2D
 @export var move_speed := 80.0
 var target_water: Node2D
+signal GoToWater(target: Node2D)
 
 func Enter():
 	target_water = find_nearest_water()
+	emit_signal("GoToWater",target_water)
+
 
 func Physics_Update(delta):
 	if not target_water:
@@ -17,7 +20,6 @@ func Physics_Update(delta):
 	if direction.length() > 40:
 		Animal.velocity = direction.normalized() * move_speed
 	else:
-		# Pasiekė vandenį — galima atnaujinti thirst lygį
 		Animal.velocity = Vector2.ZERO
 		if Animal.is_in_group("Prey"):
 			var decision_node = Animal.get_node("PreyDecision")

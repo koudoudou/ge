@@ -66,5 +66,7 @@ metadata/_custom_type_script = "uid://di3r2s4cxxilx"
 script = ExtResource("9_n02sa")
 animal = NodePath("..")
 state_machine = NodePath("../State Machine")
-thirst_rate = 0.1
+hunger_rate = 0.1
 metadata/_custom_type_script = "uid://x5p31q4lrina"
+
+[connection signal="GoToFood" from="State Machine/SearchFood" to="." method="_on_search_food_go_to_food"]

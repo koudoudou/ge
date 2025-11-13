@@ -4,9 +4,11 @@ class_name SearchFood
 @export var Animal: CharacterBody2D
 @export var move_speed := 80.0
 var target_food: Node2D
+signal GoToFood(target: Node2D)
 
 func Enter():
 	target_food = find_nearest_food()
+	emit_signal("GoToFood",target_food)
 	
 func Physics_Update(delta):
 	if not target_food:

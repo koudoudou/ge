@@ -1,4 +1,4 @@
-extends AnimalDecisionBase
+extends AnimalDecision
 class_name PredatorDecision
 
 @export var hunt_radius := 520.0
@@ -52,8 +52,3 @@ func check_for_prey() -> float:
 		if animal.global_position.distance_to(p.global_position) < hunt_radius:
 			return 1.0
 	return 0.0
-
-#func eat_prey():
-#	var prey = get_tree().get_nodes_in_group("Prey")
-#	for p in prey:
-#		if animal.global_position.distance_to(p.global_position) < hunt_radius:

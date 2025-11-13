@@ -22,14 +22,12 @@ func Physics_Update(delta):
 	else:
 		# Pagavo grobį
 		Animal.velocity = Vector2.ZERO
-		# Pvz., sumažiname alkį
 		var decision_node = Animal.get_node("PredatorDecision")
 		decision_node.hunger = 0.0
 		
 		decision_timer -= delta
 		if decision_timer <= 0:
 			decision_timer = 1.0		
-		# Galėtum čia ištrinti grobį arba paleisti animaciją
 			if prey_target:
 				prey_target.queue_free()
 		

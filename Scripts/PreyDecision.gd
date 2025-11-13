@@ -1,8 +1,8 @@
-extends AnimalDecisionBase
+extends AnimalDecision
 class_name PreyDecision
 
 @export var danger_radius := 200.0
-
+signal searchFood
 var danger := 0.0
 var index := 0
 func _process(delta: float):
@@ -18,10 +18,7 @@ func _process(delta: float):
 	decision_timer -= delta
 	if decision_timer <= 0:
 		make_fuzzy_decision()
-		decision_timer = 1.0	
-		
-
-		
+		decision_timer = 1.0
 		
 func make_fuzzy_decision():
 	var current = state_machine.current_state
@@ -43,6 +40,7 @@ func make_fuzzy_decision():
 
 	if current_name != next_state.to_lower():
 		state_machine.on_child_transition(current, next_state)
+		emit_signal("searchFood")
 
 func check_for_predators() -> float:
 	var predators = get_tree().get_nodes_in_group("Predator")

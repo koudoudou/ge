@@ -2,7 +2,7 @@ extends State
 class_name SearchPrey
 
 @export var Animal: CharacterBody2D
-@export var move_speed := 120.0  # greičiau nei Idle
+@export var move_speed := 120.0 
 var wander_direction: Vector2
 var wander_time: float = 0.0
 

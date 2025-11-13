@@ -1,5 +1,5 @@
 extends Node
-class_name AnimalDecisionBase
+class_name AnimalDecision
 
 @export var animal: CharacterBody2D
 @export var state_machine: Node
