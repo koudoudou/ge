@@ -19,7 +19,7 @@ func Physics_Update(delta):
 	if direction.length() > 40:
 		Animal.velocity = direction.normalized() * move_speed
 	else:
-		# Pasiekė maistą — galėtum čia padidinti hunger lygį
+		# Pasiekė maistą 
 		Animal.velocity = Vector2.ZERO
 		var decision_node = Animal.get_node("PreyDecision")
 		decision_node.hunger = max(decision_node.hunger - 0.7, 0)
