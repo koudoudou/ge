@@ -32,7 +32,7 @@ func Physics_Update(_delta):
 		return
 	if dist <= 40.0:
 		# Pasiekė maistą
-		Animal.velocity = Vector2.ZERO
+		Animal.base_velocity = Vector2.ZERO
 		Animal.clear_target()
 		var decision_node = Animal.get_node("PreyDecision")
 		decision_node.hunger = max(decision_node.hunger - 0.7, 0)

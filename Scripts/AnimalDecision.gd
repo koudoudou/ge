@@ -16,9 +16,6 @@ func _decay_needs(delta: float) -> void:
 	if not state_machine or not state_machine.current_state:
 		return
 	var name = state_machine.current_state.name.to_lower()
-	if name == "searchfood":
+	if name == "idle":
 		hunger = max(hunger - smooth_decay * delta, 0.0)
-	elif name == "searchwater":
 		thirst = max(thirst - smooth_decay * delta, 0.0)
-	elif name == "searchprey":
-		hunger = max(hunger - smooth_decay * delta * 0.5, 0.0)

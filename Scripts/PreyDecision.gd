@@ -9,6 +9,7 @@ func _process(delta: float):
 	if hunger >= 1.0 or thirst >= 1.0 or index == 1:
 		var current = state_machine.current_state		
 		state_machine.on_child_transition(current,"Dead")
+		return
 		
 	hunger = clamp(hunger + hunger_rate * delta, 0.0, 1.0)
 	thirst = clamp(thirst + thirst_rate * delta, 0.0, 1.0)	

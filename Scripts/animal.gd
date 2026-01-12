@@ -14,13 +14,29 @@ signal selected(animal: Animal)
 @export var waypoint_radius: float = 6.0
 @export var extra_obstacle_groups: Array[StringName] = ["Food", "Water"]
 
+@onready var flock_sense: Area2D = $FlockSense
+@export var flock_enabled := true
+@export var flock_radius: float = 300.0
+@export var separation_radius: float = 45.0
+
+@export var w_cohesion: float = 0.9
+@export var w_alignment: float = 0.9
+@export var w_separation: float = 1.6
+
+@export var max_flock_force: float = 70.0
+
 var pathfinding_grid: AStarGrid2D = AStarGrid2D.new()
 
 var _path_points: PackedVector2Array = PackedVector2Array()
 var _path_index: int = 0
 
+var _neighbors: Array[Animal] = []
 
+var base_velocity: Vector2 = Vector2.ZERO
 func _ready() -> void:
+	if flock_sense:
+		flock_sense.body_entered.connect(_on_flock_enter)
+		flock_sense.body_exited.connect(_on_flock_exit)
 	input_pickable = true
 	# TileMap layers (world is using TileMapLayer nodes grouped as Navigation / Obstacles)
 	tilemap_layer_node = get_tree().get_nodes_in_group("Navigation")[0]
@@ -52,38 +68,130 @@ func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> vo
 		selected.emit(self)
 		
 func _physics_process(delta: float) -> void:
-	# If we have a path, we override velocity and move smoothly along waypoints.
+	# 1) Nustatyk base_velocity:
+	# - jei yra A* kelias -> base_velocity iš waypoint
+	# - jei nėra kelio -> base_velocity paliekam (jį nustato state, pvz. Idle)
+
 	if _path_points.size() > 0 and _path_index < _path_points.size():
 		var next_pos: Vector2 = _path_points[_path_index]
 		var to_next := next_pos - global_position
 
-		# Advance waypoint when close enough.
 		if to_next.length() <= waypoint_radius:
 			_path_index += 1
 			if _path_index >= _path_points.size():
-				# Path finished.
 				clear_target()
-				velocity = Vector2.ZERO
-				move_and_slide()
-				return
-			next_pos = _path_points[_path_index]
-			to_next = next_pos - global_position
+				base_velocity = Vector2.ZERO
+			else:
+				next_pos = _path_points[_path_index]
+				to_next = next_pos - global_position
 
-		if to_next.length() > 0.001:
-			velocity = to_next.normalized() * move_speed
+		if _path_index < _path_points.size() and to_next.length() > 0.001:
+			base_velocity = to_next.normalized() * move_speed
 		else:
-			velocity = Vector2.ZERO
+			base_velocity = Vector2.ZERO
 
 		_update_path_visual()
+	#else:
+		## jei target nėra, o base_velocity senas — neleisk jam "užstrigti"
+		#if target_node == null:
+			#base_velocity = Vector2.ZERO
 
+	# 2) Pridėk flock steer (tik prey)
+	var v := base_velocity
+	if flock_enabled and is_in_group("Prey"):
+		# silpnink flock kai esi arti waypoint (kad nepramuštų kelio)
+		var t := 1.0
+		if _path_points.size() > 0 and _path_index < _path_points.size():
+			var d := global_position.distance_to(_path_points[_path_index])
+			t = clampf(d / 40.0, 0.0, 1.0)
+
+		v += _flock_steer() * t
+
+	# 3) Apribok į move_speed (kad flock nepadidintų greičio)
+	if v.length() > move_speed:
+		v = v.normalized() * move_speed
+
+	velocity = v
 	move_and_slide()
 
+func _on_flock_enter(b: Node) -> void:
+	if not is_in_group("Prey"):
+		return
+	if b is Animal and b != self and b.is_in_group("Prey"):
+		_neighbors.append(b)
 
+func _on_flock_exit(b: Node) -> void:
+	if b is Animal:
+		_neighbors.erase(b)
+		
 func setTargetNode(target: Node2D) -> void:
 	target_node = target
 	_rebuild_path()
+	
+func _flock_steer() -> Vector2:
+	if not flock_enabled or not is_in_group("Prey"):
+		return Vector2.ZERO
+	if _neighbors.is_empty():
+		return Vector2.ZERO
 
+	var pos := global_position
+	var center := Vector2.ZERO
+	var avg_vel := Vector2.ZERO
+	var sep := Vector2.ZERO
+	var count := 0
 
+	for n in _neighbors:
+		if not is_instance_valid(n):
+			continue
+		var d := pos.distance_to(n.global_position)
+		if d <= 0.001 or d > flock_radius:
+			continue
+
+		center += n.global_position
+		avg_vel += n.velocity
+		count += 1
+
+		if d < separation_radius:
+			# stipriau stumia kuo arčiau
+			sep += (pos - n.global_position) / max(d, 0.001)
+
+	if count == 0:
+		return Vector2.ZERO
+
+	center /= float(count)
+	avg_vel /= float(count)
+
+	var cohesion := (center - pos)
+	if cohesion.length() > 0.001:
+		cohesion = cohesion.normalized()
+
+	var alignment := avg_vel
+	if alignment.length() > 0.001:
+		alignment = alignment.normalized()
+
+	if sep.length() > 0.001:
+		sep = sep.normalized()
+
+	var steer := cohesion * w_cohesion + alignment * w_alignment + sep * w_separation
+
+	# apribok jėgą
+	var l := steer.length()
+	if l > max_flock_force:
+		steer = steer / l * max_flock_force
+
+	return steer
+	
+func get_flock_status() -> String:
+	if not is_in_group("Prey"):
+		return "N/A"
+
+	# jei naudoji _neighbors iš flocking Area2D
+	var count := 0
+	for n in _neighbors:
+		if is_instance_valid(n) and n != self and n.is_in_group("Prey"):
+			count += 1
+
+	return "Flocked" if count > 0 else "Alone"
 # For the connection in Animal.tscn (safe even if you later remove the connection).
 func _on_search_food_go_to_food(target: Node2D) -> void:
 	setTargetNode(target)

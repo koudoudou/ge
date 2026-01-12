@@ -14,4 +14,4 @@ func Enter():
 		
 func Physics_Update(delta: float):
 	if Animal:
-		Animal.velocity = Vector2.ZERO
+		Animal.base_velocity = Vector2.ZERO

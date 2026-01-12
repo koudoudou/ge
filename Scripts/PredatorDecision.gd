@@ -3,7 +3,6 @@ class_name PredatorDecision
 
 @export var hunt_radius := 520.0
 
-var bloodlust := 0.0
 var prey_detected := 0.0
 
 func _process(delta: float):

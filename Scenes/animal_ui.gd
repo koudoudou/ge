@@ -4,6 +4,7 @@ class_name AnimalUi
 @onready var panel: PanelContainer = $PanelContainer
 @onready var name_label: Label = $PanelContainer/VBoxContainer/Name
 @onready var state_label: Label = $PanelContainer/VBoxContainer/State
+@onready var flock_label: Label = $PanelContainer/VBoxContainer/Flock
 @onready var hunger_bar: ProgressBar = $PanelContainer/VBoxContainer/Hunger
 @onready var thirst_bar: ProgressBar = $PanelContainer/VBoxContainer/Thirst
 @onready var close_btn: Button = $PanelContainer/VBoxContainer/Exit
@@ -63,6 +64,7 @@ func _refresh() -> void:
 
 	hunger_bar.value = clamp(h, 0.0, 1.0) * 100.0
 	thirst_bar.value = clamp(t, 0.0, 1.0) * 100.0
+	flock_label.text = "Flock: %s" % current.get_flock_status()
 
 func _close() -> void:
 	panel.visible = false

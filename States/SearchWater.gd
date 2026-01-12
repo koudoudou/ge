@@ -26,11 +26,11 @@ func Physics_Update(_delta):
 
 	# Movement is handled by Animal via A* path.
 	var dist := Animal.global_position.distance_to(target_water.global_position)
-	if Animal.target_node == null and dist > 40.0:
+	if Animal.target_node == null and dist > 50.0:
 		Transitioned.emit(self, "Idle")
 		return
-	if dist <= 40.0:
-		Animal.velocity = Vector2.ZERO
+	if dist <= 50.0:
+		Animal.base_velocity = Vector2.ZERO
 		Animal.clear_target()
 
 		if Animal.is_in_group("Prey"):

@@ -1,6 +1,5 @@
 [gd_scene load_steps=11 format=3 uid="uid://cjp01lf616ga5"]
 
-[ext_resource type="Script" uid="uid://bojxlfxq3dj2d" path="res://Scripts/predator.gd" id="1_q0rnc"]
 [ext_resource type="Texture2D" uid="uid://cx5xaw758ykm" path="res://icon.svg" id="2_7xfnq"]
 [ext_resource type="Script" uid="uid://dqfieck4p7ry6" path="res://States/state_machine.gd" id="3_not4f"]
 [ext_resource type="Script" uid="uid://c2u3ewctwpjo0" path="res://States/Idle.gd" id="4_ecq7r"]
@@ -10,17 +9,23 @@
 [ext_resource type="Script" uid="uid://57rhs7u1vurx" path="res://States/SearchWater.gd" id="8_ukws4"]
 [ext_resource type="Script" uid="uid://dlxepn56po63k" path="res://Scripts/PredatorDecision.gd" id="9_q0rnc"]
 
+[sub_resource type="GDScript" id="GDScript_4r718"]
+script/source = "extends Animal
+
+	
+"
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0tjbk"]
-size = Vector2(127, 128)
+size = Vector2(102.75, 99.5)
 
 [node name="Predator" type="CharacterBody2D" groups=["Predator"]]
-script = ExtResource("1_q0rnc")
+script = SubResource("GDScript_4r718")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_7xfnq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, -1)
+z_index = 1
 shape = SubResource("RectangleShape2D_0tjbk")
 
 [node name="State Machine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
@@ -52,13 +57,13 @@ metadata/_custom_type_script = "uid://di3r2s4cxxilx"
 [node name="SearchPrey" type="Node" parent="State Machine" node_paths=PackedStringArray("Animal")]
 script = ExtResource("8_7xfnq")
 Animal = NodePath("../..")
-move_speed = 25.0
+move_speed = 40.0
 metadata/_custom_type_script = "uid://cvu37frrapnlr"
 
 [node name="PredatorDecision" type="Node" parent="." node_paths=PackedStringArray("animal", "state_machine")]
 script = ExtResource("9_q0rnc")
-hunt_radius = 100.0
+hunt_radius = 120.0
 animal = NodePath("..")
 state_machine = NodePath("../State Machine")
-thirst_rate = 0.1
+smooth_decay = 0.01
 metadata/_custom_type_script = "uid://dlxepn56po63k"

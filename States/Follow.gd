@@ -18,10 +18,10 @@ func Physics_Update(delta):
 	
 	# Jei grobis dar netoli – tęsiame gaudymą
 	if direction.length() > 50:
-		Animal.velocity = direction.normalized() * move_speed
+		Animal.base_velocity = direction.normalized() * move_speed
 	else:
 		# Pagavo grobį
-		Animal.velocity = Vector2.ZERO
+		Animal.base_velocity = Vector2.ZERO
 		var decision_node = Animal.get_node("PredatorDecision")
 		decision_node.hunger = 0.0
 		

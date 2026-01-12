@@ -16,11 +16,11 @@ func Physics_Update(delta):
 	var direction = Animal.global_position - danger_target.global_position
 	
 	if direction.length() < 300:
-		Animal.velocity = direction.normalized() * move_speed
+		Animal.base_velocity = direction.normalized() * move_speed
 	else:
 		# Kai pavojus toli – grįžtam į Idle
 		Transitioned.emit(self, "Idle")
-		Animal.velocity = Vector2.ZERO
+		Animal.base_velocity = Vector2.ZERO
 
 func find_nearest_predator():
 	var predators = get_tree().get_nodes_in_group("Predator")
