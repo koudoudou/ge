@@ -793,5 +793,3 @@ position = Vector2(110, 272)
 
 [node name="WaterSource3" parent="." instance=ExtResource("5_pbw6q")]
 position = Vector2(984, 157)
-
-[node name="Sources" type="Node" parent="."]

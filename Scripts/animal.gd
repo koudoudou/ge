@@ -47,7 +47,10 @@ func _ready() -> void:
 		$"State Machine/SearchFood".GoToFood.connect(setTargetNode)
 	$"State Machine/SearchWater".GoToWater.connect(setTargetNode)
 
-
+func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		selected.emit(self)
+		
 func _physics_process(delta: float) -> void:
 	# If we have a path, we override velocity and move smoothly along waypoints.
 	if _path_points.size() > 0 and _path_index < _path_points.size():
