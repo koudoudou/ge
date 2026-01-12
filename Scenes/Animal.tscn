@@ -12,13 +12,14 @@
 [ext_resource type="Script" uid="uid://x5p31q4lrina" path="res://Scripts/PreyDecision.gd" id="9_n02sa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0tjbk"]
-size = Vector2(104.25, 97.5)
+size = Vector2(126.5625, 124.875)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_csly7"]
 radius = 300.0
 
 [node name="Animal" type="CharacterBody2D" groups=["Prey"]]
 script = ExtResource("1_0tjbk")
+clearance_cells = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_l6hdp")

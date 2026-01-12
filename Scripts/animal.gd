@@ -36,17 +36,16 @@ signal selected(animal: Animal)
 
 var _neighbors: Array[Animal] = []
 
-# state’ai (Idle ir pan.) turi nustatyti šitą, o Animal pritaiko flock + collisions
 var base_velocity: Vector2 = Vector2.ZERO
 
 # --- PATHFINDING ---
 var pathfinding_grid: AStarGrid2D = AStarGrid2D.new()
 var _path_points: PackedVector2Array = PackedVector2Array()
 var _path_index: int = 0
-
+@export var clearance_cells: int = 0
 
 func _ready() -> void:
-	# Leisk state machine (vaikams) suskaičiuoti base_velocity pirma
+	
 	process_physics_priority = 10
 
 	input_pickable = true
@@ -77,7 +76,7 @@ func _ready() -> void:
 	for cell: Vector2i in tilemap_layer_node.get_used_cells():
 		pathfinding_grid.set_point_solid(cell, false)
 	for cell: Vector2i in tilemap_obstacles.get_used_cells():
-		pathfinding_grid.set_point_solid(cell, true)
+		_set_solid_with_clearance(cell, true)
 
 	call_deferred("_apply_extra_obstacles")
 
@@ -114,7 +113,6 @@ func _physics_process(delta: float) -> void:
 			base_velocity = Vector2.ZERO
 
 		_update_path_visual()
-	# else: base_velocity palieka state machine (Idle ir t.t.)
 
 	# 2) desired = base (+ flock)
 	var desired := base_velocity
@@ -137,7 +135,7 @@ func _physics_process(delta: float) -> void:
 
 		desired += steer * t
 
-	# 3) niekada neleisk viršyti state’o greičio (Idle 15 turi likti 15)
+	
 	if speed_cap > 0.001 and desired.length() > speed_cap:
 		desired = desired.normalized() * speed_cap
 
@@ -244,7 +242,24 @@ func get_flock_status() -> String:
 # -------------------------
 # TARGET / PATH
 # -------------------------
+func _set_solid_with_clearance(cell: Vector2i, solid: bool) -> void:
+	if not _cell_in_region(cell):
+		return
 
+	if clearance_cells <= 0:
+		pathfinding_grid.set_point_solid(cell, solid)
+		return
+
+	if not solid:
+		pathfinding_grid.set_point_solid(cell, false)
+		return
+
+	for y in range(cell.y - clearance_cells, cell.y + clearance_cells + 1):
+		for x in range(cell.x - clearance_cells, cell.x + clearance_cells + 1):
+			var c := Vector2i(x, y)
+			if _cell_in_region(c):
+				pathfinding_grid.set_point_solid(c, true)
+				
 func setTargetNode(target: Node2D) -> void:
 	target_node = target
 	_rebuild_path()
@@ -365,7 +380,7 @@ func _mark_node_as_obstacle(node: Node) -> void:
 	if rect.size == Vector2.ZERO:
 		var c := tilemap_layer_node.local_to_map(tilemap_layer_node.to_local((node as Node2D).global_position))
 		if _cell_in_region(c):
-			pathfinding_grid.set_point_solid(c, true)
+			_set_solid_with_clearance(c, true)
 		return
 
 	var p0 := rect.position
@@ -383,7 +398,7 @@ func _mark_node_as_obstacle(node: Node) -> void:
 		for x in range(xmin, xmax + 1):
 			var cell := Vector2i(x, y)
 			if _cell_in_region(cell):
-				pathfinding_grid.set_point_solid(cell, true)
+				_set_solid_with_clearance(cell, true)
 
 
 # -------------------------

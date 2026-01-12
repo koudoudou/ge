@@ -20,6 +20,7 @@ size = Vector2(102.75, 99.5)
 
 [node name="Predator" type="CharacterBody2D" groups=["Predator"]]
 script = SubResource("GDScript_4r718")
+clearance_cells = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_7xfnq")
