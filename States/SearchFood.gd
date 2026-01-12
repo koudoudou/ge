@@ -1,26 +1,39 @@
 extends State
 class_name SearchFood
 
-@export var Animal: CharacterBody2D
+@export var Animal: Animal
 @export var move_speed := 80.0
+
 var target_food: Node2D
 signal GoToFood(target: Node2D)
 
 func Enter():
+	if Animal:
+		Animal.move_speed = move_speed
 	target_food = find_nearest_food()
-	emit_signal("GoToFood",target_food)
-	
-func Physics_Update(delta):
-	if not target_food:
+	emit_signal("GoToFood", target_food)
+
+func Exit():
+	# If we leave this state for any reason (e.g. danger -> Flee), stop following the old path.
+	if Animal:
+		Animal.clear_target()
+
+func Physics_Update(_delta):
+	if not target_food or not is_instance_valid(target_food):
+		if Animal:
+			Animal.clear_target()
 		Transitioned.emit(self, "Idle")
 		return
-		
-	var direction = target_food.global_position - Animal.global_position
-	if direction.length() > 40:
-		Animal.velocity = direction.normalized() * move_speed
-	else:
-		# Pasiekė maistą 
+
+	# Movement is handled by Animal via A* path.
+	var dist := Animal.global_position.distance_to(target_food.global_position)
+	if Animal.target_node == null and dist > 40.0:
+		Transitioned.emit(self, "Idle")
+		return
+	if dist <= 40.0:
+		# Pasiekė maistą
 		Animal.velocity = Vector2.ZERO
+		Animal.clear_target()
 		var decision_node = Animal.get_node("PreyDecision")
 		decision_node.hunger = max(decision_node.hunger - 0.7, 0)
 		Transitioned.emit(self, "Idle")

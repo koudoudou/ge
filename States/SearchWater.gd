@@ -1,31 +1,43 @@
 extends State
 class_name SearchWater
 
-@export var Animal: CharacterBody2D
+@export var Animal: Animal
 @export var move_speed := 80.0
+
 var target_water: Node2D
 signal GoToWater(target: Node2D)
 
 func Enter():
+	if Animal:
+		Animal.move_speed = move_speed
 	target_water = find_nearest_water()
-	emit_signal("GoToWater",target_water)
+	emit_signal("GoToWater", target_water)
 
+func Exit():
+	if Animal:
+		Animal.clear_target()
 
-func Physics_Update(delta):
-	if not target_water:
+func Physics_Update(_delta):
+	if not target_water or not is_instance_valid(target_water):
+		if Animal:
+			Animal.clear_target()
 		Transitioned.emit(self, "Idle")
 		return
-		
-	var direction = target_water.global_position - Animal.global_position
-	if direction.length() > 40:
-		Animal.velocity = direction.normalized() * move_speed
-	else:
+
+	# Movement is handled by Animal via A* path.
+	var dist := Animal.global_position.distance_to(target_water.global_position)
+	if Animal.target_node == null and dist > 40.0:
+		Transitioned.emit(self, "Idle")
+		return
+	if dist <= 40.0:
 		Animal.velocity = Vector2.ZERO
+		Animal.clear_target()
+
 		if Animal.is_in_group("Prey"):
 			var decision_node = Animal.get_node("PreyDecision")
 			decision_node.thirst = max(decision_node.thirst - 0.7, 0)
 			Transitioned.emit(self, "Idle")
-		if Animal.is_in_group("Predator"):
+		elif Animal.is_in_group("Predator"):
 			var decision_node = Animal.get_node("PredatorDecision")
 			decision_node.thirst = max(decision_node.thirst - 0.7, 0)
 			Transitioned.emit(self, "Idle")
