@@ -264,7 +264,6 @@ func setTargetNode(target: Node2D) -> void:
 	target_node = target
 	_rebuild_path()
 
-# (jei turi seną connection Animal.tscn)
 func _on_search_food_go_to_food(target: Node2D) -> void:
 	setTargetNode(target)
 

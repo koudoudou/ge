@@ -62,8 +62,8 @@ func _refresh() -> void:
 	if current.has_method("get_thirst_01"):
 		t = float(current.call("get_thirst_01"))
 
-	hunger_bar.value = clamp(h, 0.0, 1.0) * 100.0
-	thirst_bar.value = clamp(t, 0.0, 1.0) * 100.0
+	hunger_bar.value = clampf((1.0 - current.get_hunger_01()) * 100.0, 0.0, 100.0)
+	thirst_bar.value = clampf((1.0 - current.get_thirst_01()) * 100.0, 0.0, 100.0)
 	flock_label.text = "Flock: %s" % current.get_flock_status()
 
 func _close() -> void:

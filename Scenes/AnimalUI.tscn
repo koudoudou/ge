@@ -26,9 +26,11 @@ text = "State: Unknown"
 layout_mode = 2
 
 [node name="Hunger" type="ProgressBar" parent="PanelContainer/VBoxContainer"]
+self_modulate = Color(0.590848, 0.35694605, 2.8878452e-07, 1)
 layout_mode = 2
 
 [node name="Thirst" type="ProgressBar" parent="PanelContainer/VBoxContainer"]
+modulate = Color(0.22867534, 0.6170819, 0.99999994, 1)
 layout_mode = 2
 
 [node name="Exit" type="Button" parent="PanelContainer/VBoxContainer"]
